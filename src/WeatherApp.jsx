@@ -14,15 +14,10 @@ export default function WeatherApp() {
         weather: "haze",
     });
 
-    (newInfo) => {
-        setWeatherInfo(newInfo);
-    }
-
     return (
         <>
             <SearchBox setWeatherInfo={setWeatherInfo} />
             <InfoBox weatherInfo={weatherInfo} />
         </>
-    )
-
+    );
 }

@@ -12,10 +12,13 @@ export default function SearchBox({ setWeatherInfo }) {
 
     let getWeatherInfo = async () => {
         try {
-            let respons = await fetch(`${API_URL}?q=${city}&appid=${API_KEY}&units=metric`);
-            let jsonResponse = await respons.json();
+            let response = await fetch(`${API_URL}?q=${encodeURIComponent(city.trim())}&appid=${API_KEY}&units=metric`);
+            let jsonResponse = await response.json();
+            if (!response.ok || (jsonResponse.cod && jsonResponse.cod !== 200 && jsonResponse.cod !== "200")) {
+                throw new Error(jsonResponse.message || "Failed to fetch weather data");
+            }
             let result = {
-                city: city,
+                city: jsonResponse.name || city,
                 temp: jsonResponse.main.temp,
                 tempMax: jsonResponse.main.temp_max,
                 tempMin: jsonResponse.main.temp_min,
@@ -50,6 +53,9 @@ export default function SearchBox({ setWeatherInfo }) {
     async function fetchWeatherData(lat, lon) {
         const response = await fetch(`${API_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
         const data = await response.json();
+        if (!response.ok || (data.cod && data.cod !== 200 && data.cod !== "200")) {
+            throw new Error(data.message || "Failed to fetch location weather");
+        }
         return {
             city: data.name,
             temp: data.main.temp,
